@@ -13,6 +13,10 @@ int main()
     _printf("Unsigned int of 98: %u\nOctal representation of 98: %o\nHexdecimal representation of 98 using x: %x\nHexdecimal representation of 42267 using X: %X\nBinary representation of 98 is : %b\nTask 4 done!\n----------\n",98,98,98,42267,98);
     // testing task 7
     _printf("Testing S: %S\nTask 7 done!\n----------\n","Best \nSchool");
+    // testing task 8
+    _printf("Testing length modifier h with number -131411542: %hi\nTesting length modifier l with number -131411542: %li\n",-131411542, -131411542);
+    _printf("Testing length modifier h with number 131411542: %hu\nTesting length modifier l with number 131411542: %lu\n",131411542, 131411542);
+    _printf("Testing length modifier l with number octal: %lo\nTesting length modifier l with hexa number 42267: %lx\nTask 8 done!\n----------\n",42267, 42267);
 
     return 0;
 }

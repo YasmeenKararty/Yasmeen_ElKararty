@@ -129,6 +129,15 @@ int _printf(const char *format, ...){
         if(format[index] =='%' ){
             // hold the specfier
             char specifier = format[index+1];
+            char lengthModfier = ' ';
+            int widthField;
+            int fieldPrecision;
+
+            if (specifier == 'l' || specifier=='h'){
+                lengthModfier = specifier;
+                index++;
+                specifier = format[index+1];
+            }
 
             switch(specifier){
             case '%':
@@ -157,13 +166,24 @@ int _printf(const char *format, ...){
             }
             case 'd':
             case 'i':{
-                int intArgument = va_arg(listPtr,signed int);
-                char * intArgumentAsStr = convertIntToStr (intArgument, true);
-                int argumentLength  = countStrLength(intArgumentAsStr);
+                char * argumentAsStr;
+                if (lengthModfier == 'h'){
+                    short argument = va_arg(listPtr,signed int);
+                    argumentAsStr = convertIntToStr (argument, true);
+                }
+                else if (lengthModfier == 'l'){
+                    long argument = va_arg(listPtr,long);
+                    argumentAsStr = convertIntToStr (argument, true);
+                }
+                else{
+                    int argument = va_arg(listPtr,signed int);
+                    argumentAsStr = convertIntToStr (argument, true);
+                }
+                int argumentLength  = countStrLength(argumentAsStr);
                 if (currentStrLength + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
                 for (int i=0; i<argumentLength;i++)
-                    currentStr[currentStrLength++] = intArgumentAsStr[i];
+                    currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -171,24 +191,46 @@ int _printf(const char *format, ...){
             case 'x':
             case 'X':
             case 'o':{
-                int intArgument = va_arg(listPtr,int);
-                char * argument = numericConversion (intArgument, specifier);
-                int argumentLength = countStrLength(argument);
+                char * argumentAsStr;
+                if (lengthModfier == 'h'){
+                    short argument = va_arg(listPtr, int);
+                    argumentAsStr = numericConversion (argument, specifier);
+                }
+                else if (lengthModfier == 'l'){
+                    long argument = va_arg(listPtr,long);
+                    argumentAsStr = numericConversion (argument, specifier);
+                }
+                else{
+                    int argument = va_arg(listPtr,int);
+                    argumentAsStr = numericConversion (argument, specifier);
+                }
+                int argumentLength = countStrLength(argumentAsStr);
                 if (currentStrLength + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
                 for (int i=0; i<argumentLength;i++)
-                    currentStr[currentStrLength++] = argument[i];
+                    currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
             case 'u':{
-                int intArgument = va_arg(listPtr,unsigned int);
-                char * argument = convertIntToStr (intArgument, false);
-                int argumentLength = countStrLength(argument);
+                char * argumentAsStr;
+                if (lengthModfier == 'h'){
+                    short argument = va_arg(listPtr,unsigned int);
+                    argumentAsStr = convertIntToStr (argument, false);
+                }
+                else if (lengthModfier == 'l'){
+                    long argument = va_arg(listPtr,long);
+                    argumentAsStr = convertIntToStr (argument, false);
+                }
+                else{
+                    int argument = va_arg(listPtr,unsigned int);
+                    argumentAsStr = convertIntToStr (argument, false);
+                }
+                int argumentLength = countStrLength(argumentAsStr);
                 if (currentStrLength + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
                 for (int i=0; i<argumentLength;i++)
-                    currentStr[currentStrLength++] = argument[i];
+                    currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -213,6 +255,7 @@ int _printf(const char *format, ...){
                 //numOfCharsPrinted+= strArgumentLength;
                 break;
             }
+
             }
             index+=2;
         }
