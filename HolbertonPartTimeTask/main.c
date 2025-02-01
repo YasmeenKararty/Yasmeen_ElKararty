@@ -9,7 +9,8 @@ int main()
     _printf("Number of chars Printed by s: %i\nNumber of chars Printed by i in negative: %i\nTask 2 done!\n----------\n",numOfCharsPrinted,-numOfCharsPrinted);
     // testing task 3
     _printf("Binary Num of 98 is : %b\nTask 3 done!\n----------\n",98);
-
+    // testing task 4
+    _printf("Unsigned int of 98: %u\nOctal representation of 98: %o\nHexdecimal representation of 98 using x: %x\nHexdecimal representation of 98 using X: %X\nBinary representation of 98 is : %b\nTask 4 done!\n----------\n",98,98,98,98,98);
 
 
     return 0;

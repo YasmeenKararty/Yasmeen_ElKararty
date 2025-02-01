@@ -11,11 +11,11 @@ int countStrLength (char * str){
     return length;
 }
 // same as sprintf but implemented it my own since it is not mentioned to use it
-char* convertIntToStr(int num){
+char* convertIntToStr(int num, bool isSigned){
     char numInStrReverse [12];
     int currentStrIndex = 0;
     bool isNeg = false;
-    if (num <0){
+    if (isSigned && num <0){
         isNeg = true;
         num = 0-num;
     }
@@ -30,7 +30,7 @@ char* convertIntToStr(int num){
         currentStrIndex++;
         num/=10;
     }
-    if (isNeg){
+    if (isSigned && isNeg){
         numInStrReverse[currentStrIndex] = '-';
         currentStrIndex++;
     }
@@ -44,25 +44,30 @@ char* convertIntToStr(int num){
 
 }
 // func to handle decimal to binary conversion
-char* binaryConversion(int num){
-    int binaryNumLimit = 20;
-    char binaryInReverse [binaryNumLimit];
+char* numericConversion(int num, char conversionType){
+    int conversionNumLimit = 20;
+    char numReverse [conversionNumLimit];
     int currentLength= 0;
     if (num == 0){
-        binaryInReverse[currentLength] = '0';
+        numReverse[currentLength] = '0';
         currentLength++;
     }
+    int conversionDivider;
+    if (conversionType == 'b') conversionDivider = 2;
+    else if (conversionType == 'x' || conversionType == 'X') conversionDivider = 16;
+    else if (conversionType == 'o') conversionDivider = 8;
+
     while(num >0){
-        binaryInReverse[currentLength] = (char)((num % 2)+'0') ;
-        num = num/2;
+        numReverse[currentLength] = (char)((num % conversionDivider)+'0') ;
+        num = num/conversionDivider;
         currentLength++;
     }
-    char *binaryStr = (char *)malloc(currentLength * sizeof(char));
+    char *numInSTR = (char *)malloc(currentLength * sizeof(char));
     for (int i = 0 ;i<currentLength; i++){
-        binaryStr[currentLength - i - 1] = binaryInReverse[i];
+        numInSTR[currentLength - i - 1] = numReverse[i];
     }
-    binaryStr[currentLength] = '\0';
-    return binaryStr;
+    numInSTR[currentLength] = '\0';
+    return numInSTR;
 }
 
 int _printf(const char *format, ...){
@@ -111,15 +116,26 @@ int _printf(const char *format, ...){
             case 'd':
             case 'i':{
                 int intArgument = va_arg(listPtr,signed int);
-                char * intArgumentAsStr = convertIntToStr (intArgument);
+                char * intArgumentAsStr = convertIntToStr (intArgument, true);
                 int argumentLength  = countStrLength(intArgumentAsStr);
                 write(1, intArgumentAsStr, argumentLength);
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
-            case 'b':{
+            case 'b':
+            case 'x':
+            case 'X':
+            case 'o':{
                 int intArgument = va_arg(listPtr,int);
-                char * argument = binaryConversion (intArgument);
+                char * argument = numericConversion (intArgument, specifier);
+                int argumentLength = countStrLength(argument);
+                write(1, argument, argumentLength);
+                numOfCharsPrinted+=argumentLength;
+                break;
+            }
+            case 'u':{
+                int intArgument = va_arg(listPtr,unsigned int);
+                char * argument = convertIntToStr (intArgument, false);
                 int argumentLength = countStrLength(argument);
                 write(1, argument, argumentLength);
                 numOfCharsPrinted+=argumentLength;
