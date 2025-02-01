@@ -70,46 +70,52 @@ char* numericConversion(int num, char conversionType){
     return numInSTR;
 }
 
+char * writeWithBuffer (char * currentStr, int currentStrLength, int bufferLimit){
+    write(1, currentStr, currentStrLength);
+    free(currentStr);
+    return (char *)malloc(bufferLimit * sizeof(char));
+}
 int _printf(const char *format, ...){
     // variable to hold number of characters limit
-    int charactersLimit = 1000;
+    int bufferLimit = 1024;
     // variable to hold the number of characters printed
     int numOfCharsPrinted = 0;
     // holding the arguments
     va_list listPtr;
     va_start(listPtr, format);
 
-    char *currentStr = (char *)malloc(charactersLimit * sizeof(char));
+    char *currentStr = (char *)malloc(bufferLimit * sizeof(char));
     int currentStrLength = 0;
     int index = 0;
 
     while (format[index]!= '\0'){
         // if current char is % this means a specifier is next
         if(format[index] =='%' ){
-            // write text before specifier
-            write(1, currentStr, currentStrLength);
-            numOfCharsPrinted += currentStrLength;
-            currentStrLength=0;
-            free(currentStr);
-            currentStr = (char *)malloc(1000 * sizeof(char));
             // hold the specfier
             char specifier = format[index+1];
 
             switch(specifier){
             case '%':
-                write(1, "%", 1);
+                if (currentStrLength + 1 >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                currentStr[currentStrLength++] = '%';
                 numOfCharsPrinted++;
                 break;
             case 'c':{
                 char argument = va_arg(listPtr,int);
-                write(1, &argument, 1);
+                if (currentStrLength + 1 >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                currentStr[currentStrLength++] = argument;
                 numOfCharsPrinted++;
                 break;
             }
             case 's':{
                 char * strArgument = va_arg(listPtr,char*);
                 int strArgumentLength = countStrLength(strArgument);
-                write(1, strArgument ,strArgumentLength);
+                if (currentStrLength + strArgumentLength >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                for (int i=0; i<strArgumentLength;i++)
+                    currentStr[currentStrLength++] = strArgument[i];
                 numOfCharsPrinted+= strArgumentLength;
                 break;
             }
@@ -118,7 +124,10 @@ int _printf(const char *format, ...){
                 int intArgument = va_arg(listPtr,signed int);
                 char * intArgumentAsStr = convertIntToStr (intArgument, true);
                 int argumentLength  = countStrLength(intArgumentAsStr);
-                write(1, intArgumentAsStr, argumentLength);
+                if (currentStrLength + argumentLength >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                for (int i=0; i<argumentLength;i++)
+                    currentStr[currentStrLength++] = intArgumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -129,7 +138,10 @@ int _printf(const char *format, ...){
                 int intArgument = va_arg(listPtr,int);
                 char * argument = numericConversion (intArgument, specifier);
                 int argumentLength = countStrLength(argument);
-                write(1, argument, argumentLength);
+                if (currentStrLength + argumentLength >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                for (int i=0; i<argumentLength;i++)
+                    currentStr[currentStrLength++] = argument[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -137,7 +149,10 @@ int _printf(const char *format, ...){
                 int intArgument = va_arg(listPtr,unsigned int);
                 char * argument = convertIntToStr (intArgument, false);
                 int argumentLength = countStrLength(argument);
-                write(1, argument, argumentLength);
+                if (currentStrLength + argumentLength >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                for (int i=0; i<argumentLength;i++)
+                    currentStr[currentStrLength++] = argument[i];
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -148,15 +163,14 @@ int _printf(const char *format, ...){
             // if not a specifier append the string to the array
             currentStr[currentStrLength] = format[index];
             currentStrLength++;
+            numOfCharsPrinted++;
             index++;
         }
 
     }
 // if format string ended and there is still chars in the buffer write them
-if (currentStrLength!=0){
-    write(1, currentStr, currentStrLength);
-    numOfCharsPrinted += currentStrLength;
-    free(currentStr);
-}
+if (currentStrLength!=0)
+    writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+
 return numOfCharsPrinted;
 }
