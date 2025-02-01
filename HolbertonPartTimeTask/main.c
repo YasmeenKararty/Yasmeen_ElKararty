@@ -7,6 +7,8 @@ int main()
     int numOfCharsPrinted = _printf("Name: %s\nFirst Letter: %c\n%%\nTask 1 done!\n----------\n","Yasmeen",'Y');
     // testing task 2
     _printf("Number of chars Printed by s: %i\nNumber of chars Printed by i in negative: %i\nTask 2 done!\n----------\n",numOfCharsPrinted,-numOfCharsPrinted);
+    // testing task 3
+    _printf("Binary Num of 98 is : %b\nTask 3 done!\n----------\n",98);
 
 
 

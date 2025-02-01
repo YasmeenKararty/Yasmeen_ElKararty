@@ -43,6 +43,28 @@ char* convertIntToStr(int num){
     return numInStr;
 
 }
+// func to handle decimal to binary conversion
+char* binaryConversion(int num){
+    int binaryNumLimit = 20;
+    char binaryInReverse [binaryNumLimit];
+    int currentLength= 0;
+    if (num == 0){
+        binaryInReverse[currentLength] = '0';
+        currentLength++;
+    }
+    while(num >0){
+        binaryInReverse[currentLength] = (char)((num % 2)+'0') ;
+        num = num/2;
+        currentLength++;
+    }
+    char *binaryStr = (char *)malloc(currentLength * sizeof(char));
+    for (int i = 0 ;i<currentLength; i++){
+        binaryStr[currentLength - i - 1] = binaryInReverse[i];
+    }
+    binaryStr[currentLength] = '\0';
+    return binaryStr;
+}
+
 int _printf(const char *format, ...){
     // variable to hold number of characters limit
     int charactersLimit = 1000;
@@ -95,7 +117,14 @@ int _printf(const char *format, ...){
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
-
+            case 'b':{
+                int intArgument = va_arg(listPtr,int);
+                char * argument = binaryConversion (intArgument);
+                int argumentLength = countStrLength(argument);
+                write(1, argument, argumentLength);
+                numOfCharsPrinted+=argumentLength;
+                break;
+            }
             }
             index+=2;
         }
