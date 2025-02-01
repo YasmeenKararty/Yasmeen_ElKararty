@@ -1,5 +1,6 @@
 #include <stdarg.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 // func to count the length of the string
 int countStrLength (char * str){
@@ -9,7 +10,39 @@ int countStrLength (char * str){
     }
     return length;
 }
+// same as sprintf but implemented it my own since it is not mentioned to use it
+char* convertIntToStr(int num){
+    char numInStrReverse [12];
+    int currentStrIndex = 0;
+    bool isNeg = false;
+    if (num <0){
+        isNeg = true;
+        num = 0-num;
+    }
+    if (num == 0){
+        numInStrReverse[currentStrIndex]='0';
+        currentStrIndex++;
+    }
 
+    while (num>0){
+        int lastDigit = num%10;
+        numInStrReverse[currentStrIndex] = (char)(lastDigit+'0');
+        currentStrIndex++;
+        num/=10;
+    }
+    if (isNeg){
+        numInStrReverse[currentStrIndex] = '-';
+        currentStrIndex++;
+    }
+    char *numInStr = (char *)malloc(currentStrIndex + 1 * sizeof(char));
+
+    for (int i = 0 ;i<currentStrIndex; i++){
+        numInStr[currentStrIndex - i - 1] = numInStrReverse[i];
+    }
+    numInStr[currentStrIndex] = '\0';
+    return numInStr;
+
+}
 int _printf(const char *format, ...){
     // variable to hold number of characters limit
     int charactersLimit = 1000;
@@ -51,6 +84,15 @@ int _printf(const char *format, ...){
                 int strArgumentLength = countStrLength(strArgument);
                 write(1, strArgument ,strArgumentLength);
                 numOfCharsPrinted+= strArgumentLength;
+                break;
+            }
+            case 'd':
+            case 'i':{
+                int intArgument = va_arg(listPtr,signed int);
+                char * intArgumentAsStr = convertIntToStr (intArgument);
+                int argumentLength  = countStrLength(intArgumentAsStr);
+                write(1, intArgumentAsStr, argumentLength);
+                numOfCharsPrinted+=argumentLength;
                 break;
             }
 

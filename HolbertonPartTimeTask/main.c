@@ -5,8 +5,10 @@ int main()
 {
     // testing task 1
     int numOfCharsPrinted = _printf("Name: %s\nFirst Letter: %c\n%%\nTask 1 done!\n----------\n","Yasmeen",'Y');
-    // using printf only here because %i is not implemented yet in _printf
-    printf("Num of chars: %i\n",numOfCharsPrinted);
+    // testing task 2
+    _printf("Number of chars Printed by s: %i\nNumber of chars Printed by i in negative: %i\nTask 2 done!\n----------\n",numOfCharsPrinted,-numOfCharsPrinted);
+
+
 
     return 0;
 }
