@@ -43,6 +43,18 @@ char* convertIntToStr(int num, bool isSigned){
     return numInStr;
 
 }
+char hexComplement(int num){
+    switch (num){
+        case 10: return 'A';
+        case 11: return 'B';
+        case 12: return 'C';
+        case 13: return 'D';
+        case 14: return 'E';
+        case 15: return 'F';
+        default: return (char)(num + '0');
+    }
+
+}
 // func to handle decimal to binary conversion
 char* numericConversion(int num, char conversionType){
     int conversionNumLimit = 20;
@@ -58,7 +70,10 @@ char* numericConversion(int num, char conversionType){
     else if (conversionType == 'o') conversionDivider = 8;
 
     while(num >0){
-        numReverse[currentLength] = (char)((num % conversionDivider)+'0') ;
+        if (conversionType == 'x' || conversionType == 'X')
+            numReverse[currentLength] = hexComplement(num % conversionDivider) ;
+        else
+            numReverse[currentLength] = (char)((num % conversionDivider)+'0') ;
         num = num/conversionDivider;
         currentLength++;
     }
@@ -74,6 +89,27 @@ char * writeWithBuffer (char * currentStr, int currentStrLength, int bufferLimit
     write(1, currentStr, currentStrLength);
     free(currentStr);
     return (char *)malloc(bufferLimit * sizeof(char));
+}
+char* isAsciiValid(char c){
+    int asciiValue = (int) c;
+    if ((asciiValue > 0 && asciiValue < 32) || asciiValue>=127){
+            char * tempConversion = numericConversion(asciiValue,'x');
+            int count =countStrLength(tempConversion);
+            char *conversion = (char *)malloc(5 * sizeof(char));
+            conversion[0] = '\\'; conversion[1] = 'x';
+            if (count<2){
+                conversion[2] = '0'; conversion[3]=tempConversion[0];
+            }
+            else {conversion[2] = tempConversion[0]; conversion[3]=tempConversion[1];}
+            conversion[4] = '\0';
+        return conversion;
+    }
+    else {
+      char *valid =(char *)malloc(2 * sizeof(char));
+      valid[0] =c;
+      valid[1]='\0';
+      return valid;
+    }
 }
 int _printf(const char *format, ...){
     // variable to hold number of characters limit
@@ -154,6 +190,27 @@ int _printf(const char *format, ...){
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argument[i];
                 numOfCharsPrinted+=argumentLength;
+                break;
+            }
+            case 'S':{
+                char * strArgument = va_arg(listPtr,char*);
+                int strArgumentLength = countStrLength(strArgument);
+                if (currentStrLength + strArgumentLength >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                char c;
+                for (int i=0; i<strArgumentLength;i++){
+                    if (strArgument[i] == '\\'){
+                        char c = '\\'+strArgument[i+1];
+                        i++;
+                    }
+                    else c = strArgument[i];
+                    char* validAscii = isAsciiValid(c);
+                    for (int j = 0; j < countStrLength(validAscii);j++){
+                        currentStr[currentStrLength++] = validAscii[j];
+                        numOfCharsPrinted++;
+                    }
+                }
+                //numOfCharsPrinted+= strArgumentLength;
                 break;
             }
             }

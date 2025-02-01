@@ -10,8 +10,9 @@ int main()
     // testing task 4
     _printf("Binary Num of 98 is : %b\nTask 3 done!\n----------\n",98);
     // testing task 5
-    _printf("Unsigned int of 98: %u\nOctal representation of 98: %o\nHexdecimal representation of 98 using x: %x\nHexdecimal representation of 98 using X: %X\nBinary representation of 98 is : %b\nTask 4 done!\n----------\n",98,98,98,98,98);
-
+    _printf("Unsigned int of 98: %u\nOctal representation of 98: %o\nHexdecimal representation of 98 using x: %x\nHexdecimal representation of 42267 using X: %X\nBinary representation of 98 is : %b\nTask 4 done!\n----------\n",98,98,98,42267,98);
+    // testing task 7
+    _printf("Testing S: %S\nTask 7 done!\n----------\n","Best \nSchool");
 
     return 0;
 }
