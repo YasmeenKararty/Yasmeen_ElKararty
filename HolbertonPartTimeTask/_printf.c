@@ -1,7 +1,4 @@
-#include <stdarg.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <stdlib.h>
+#include "main.h"
 
 // func to count the length of the string
 int countStrLength (char * str){
