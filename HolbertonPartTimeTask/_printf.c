@@ -133,13 +133,20 @@ int _printf(const char *format, ...){
             char lengthModfier = ' ';
             int widthField = 0;
             int fieldPrecision = 0;
+            bool leftAligned = false;
+
+            if (specifier == '-'){
+                leftAligned = true;
+                index++;
+                specifier = format[index+1];
+            }
 
             if (specifier == 'l' || specifier=='h'){
                 lengthModfier = specifier;
                 index++;
                 specifier = format[index+1];
             }
-            else if ((int)specifier >= 48 && (int)specifier <=57){
+            if ((int)specifier >= 48 && (int)specifier <=57){
                 widthField = specifier-'0';
                 index++;
                 specifier = format[index+1];
@@ -149,14 +156,16 @@ int _printf(const char *format, ...){
                     index++;
                     specifier = format[index+1];
                 }
-                if (currentStrLength + widthField >= 1024)
-                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
-                for (int i=0;i<widthField;i++){
-                currentStr[currentStrLength++] = ' ';
-                numOfCharsPrinted++;
+                if (!leftAligned){
+                    if (currentStrLength + widthField >= 1024)
+                        currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                    for (int i=0;i<widthField;i++){
+                    currentStr[currentStrLength++] = ' ';
+                    numOfCharsPrinted++;
+                    }
                 }
             }
-            else if (specifier == '.'){
+            if (specifier == '.'){
                 fieldPrecision = format[index+2] -'0';
                 index+=2;
                 specifier = format[index+1];
@@ -214,7 +223,7 @@ int _printf(const char *format, ...){
                     fieldDifference= abs(fieldPrecision - argumentLength);
                 if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
-                while (fieldDifference > 0)
+                while (!leftAligned && fieldDifference > 0)
                 {
                     currentStr[currentStrLength++] = '0';
                     fieldDifference--;
@@ -222,6 +231,12 @@ int _printf(const char *format, ...){
                 }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
+                while (leftAligned && fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -248,7 +263,7 @@ int _printf(const char *format, ...){
                     fieldDifference= abs(fieldPrecision - argumentLength);
                 if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
-                while (fieldDifference > 0)
+                while (!leftAligned && fieldDifference > 0)
                 {
                     currentStr[currentStrLength++] = '0';
                     fieldDifference--;
@@ -256,6 +271,12 @@ int _printf(const char *format, ...){
                 }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
+                while (leftAligned && fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -279,7 +300,7 @@ int _printf(const char *format, ...){
                     fieldDifference= abs(fieldPrecision - argumentLength);
                 if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
-                while (fieldDifference > 0)
+                while (!leftAligned && fieldDifference > 0)
                 {
                     currentStr[currentStrLength++] = '0';
                     fieldDifference--;
@@ -287,6 +308,12 @@ int _printf(const char *format, ...){
                 }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
+                while (leftAligned && fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 numOfCharsPrinted+=argumentLength;
                 break;
             }
@@ -312,10 +339,21 @@ int _printf(const char *format, ...){
                 break;
             }
 
+
+
+        }
+        index+=2;
+        if (leftAligned && widthField>0){
+                if (currentStrLength + widthField >= 1024)
+                        currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                    for (int i=0;i<widthField;i++){
+                    currentStr[currentStrLength++] = ' ';
+                    numOfCharsPrinted++;
+                    }
             }
-            index+=2;
         }
         else{
+
             // if not a specifier append the string to the array
             currentStr[currentStrLength] = format[index];
             currentStrLength++;
@@ -324,6 +362,7 @@ int _printf(const char *format, ...){
         }
 
     }
+
 // if format string ended and there is still chars in the buffer write them
 if (currentStrLength!=0)
     writeWithBuffer(currentStr, currentStrLength, bufferLimit);

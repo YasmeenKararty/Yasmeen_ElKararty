@@ -22,6 +22,8 @@ int main()
     _printf("Name: %13s\n%%\nTask 9 done!\n----------\n","Yasmeen");
     // testing task 10
     _printf("Number of chars Printed: %.5u\nNumber of chars Printed by d in negative: %.10d\nTask 10 done!\n----------\n",numOfCharsPrinted,-numOfCharsPrinted);
+    // testing task 11
+    _printf("Left aligned: %-7iTask 11 done!\n----------\n",1312);
 
     return 0;
 }
