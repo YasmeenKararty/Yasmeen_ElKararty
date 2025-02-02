@@ -18,5 +18,7 @@ int main()
     _printf("Testing length modifier h with number 131411542: %hu\nTesting length modifier l with number 131411542: %lu\n",131411542, 131411542);
     _printf("Testing length modifier l with number octal: %lo\nTesting length modifier l with hexa number 42267: %lx\nTask 8 done!\n----------\n",42267, 42267);
 
+    // testing task 9
+    _printf("Name: %13s\n%%\nTask 9 done!\n----------\n","Yasmeen");
     return 0;
 }

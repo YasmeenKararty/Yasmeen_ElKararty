@@ -130,13 +130,30 @@ int _printf(const char *format, ...){
             // hold the specfier
             char specifier = format[index+1];
             char lengthModfier = ' ';
-            int widthField;
+            int widthField = 0;
             int fieldPrecision;
 
             if (specifier == 'l' || specifier=='h'){
                 lengthModfier = specifier;
                 index++;
                 specifier = format[index+1];
+            }
+            else if ((int)specifier >= 48 && (int)specifier <=57){
+                widthField = specifier-'0';
+                index++;
+                specifier = format[index+1];
+                while((int)specifier >= 48 && (int)specifier <=57){
+                    widthField *=10;
+                    widthField+=specifier;
+                    index++;
+                    specifier = format[index+1];
+                }
+                if (currentStrLength + widthField >= 1024)
+                    currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                for (int i=0;i<widthField;i++){
+                currentStr[currentStrLength++] = ' ';
+                numOfCharsPrinted++;
+                }
             }
 
             switch(specifier){
