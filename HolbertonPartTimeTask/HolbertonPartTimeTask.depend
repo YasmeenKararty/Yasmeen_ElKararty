@@ -1,10 +1,11 @@
 # depslib dependency file v1.0
-1738454783 source:d:\yasmeen\holbertonparttimetask\holbertonparttimetask\_printf.c
+1738456048 source:d:\yasmeen\holbertonparttimetask\holbertonparttimetask\_printf.c
 	<stdarg.h>
 	<unistd.h>
 	<stdbool.h>
+	<stdlib.h>
 
-1738451829 source:d:\yasmeen\holbertonparttimetask\holbertonparttimetask\main.c
+1738455602 source:d:\yasmeen\holbertonparttimetask\holbertonparttimetask\main.c
 	<stdio.h>
 	<stdlib.h>
 

@@ -1,6 +1,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 // func to count the length of the string
 int countStrLength (char * str){
@@ -131,7 +132,7 @@ int _printf(const char *format, ...){
             char specifier = format[index+1];
             char lengthModfier = ' ';
             int widthField = 0;
-            int fieldPrecision;
+            int fieldPrecision = 0;
 
             if (specifier == 'l' || specifier=='h'){
                 lengthModfier = specifier;
@@ -144,7 +145,7 @@ int _printf(const char *format, ...){
                 specifier = format[index+1];
                 while((int)specifier >= 48 && (int)specifier <=57){
                     widthField *=10;
-                    widthField+=specifier;
+                    widthField+=specifier-'0';
                     index++;
                     specifier = format[index+1];
                 }
@@ -153,6 +154,17 @@ int _printf(const char *format, ...){
                 for (int i=0;i<widthField;i++){
                 currentStr[currentStrLength++] = ' ';
                 numOfCharsPrinted++;
+                }
+            }
+            else if (specifier == '.'){
+                fieldPrecision = format[index+2] -'0';
+                index+=2;
+                specifier = format[index+1];
+                while((int)specifier >= 48 && (int)specifier <=57){
+                    fieldPrecision *=10;
+                    fieldPrecision+=specifier-'0';
+                    index++;
+                    specifier = format[index+1];
                 }
             }
 
@@ -197,8 +209,17 @@ int _printf(const char *format, ...){
                     argumentAsStr = convertIntToStr (argument, true);
                 }
                 int argumentLength  = countStrLength(argumentAsStr);
-                if (currentStrLength + argumentLength >= 1024)
+                int fieldDifference = 0;
+                if (fieldPrecision > 0)
+                    fieldDifference= abs(fieldPrecision - argumentLength);
+                if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                while (fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
@@ -222,8 +243,17 @@ int _printf(const char *format, ...){
                     argumentAsStr = numericConversion (argument, specifier);
                 }
                 int argumentLength = countStrLength(argumentAsStr);
-                if (currentStrLength + argumentLength >= 1024)
+                 int fieldDifference = 0;
+                if (fieldPrecision > 0)
+                    fieldDifference= abs(fieldPrecision - argumentLength);
+                if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                while (fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;
@@ -244,8 +274,17 @@ int _printf(const char *format, ...){
                     argumentAsStr = convertIntToStr (argument, false);
                 }
                 int argumentLength = countStrLength(argumentAsStr);
-                if (currentStrLength + argumentLength >= 1024)
+                 int fieldDifference = 0;
+                if (fieldPrecision > 0)
+                    fieldDifference= abs(fieldPrecision - argumentLength);
+                if (currentStrLength + fieldDifference + argumentLength >= 1024)
                     currentStr = writeWithBuffer(currentStr, currentStrLength, bufferLimit);
+                while (fieldDifference > 0)
+                {
+                    currentStr[currentStrLength++] = '0';
+                    fieldDifference--;
+                    numOfCharsPrinted++;
+                }
                 for (int i=0; i<argumentLength;i++)
                     currentStr[currentStrLength++] = argumentAsStr[i];
                 numOfCharsPrinted+=argumentLength;

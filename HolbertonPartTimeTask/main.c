@@ -20,5 +20,8 @@ int main()
 
     // testing task 9
     _printf("Name: %13s\n%%\nTask 9 done!\n----------\n","Yasmeen");
+    // testing task 10
+    _printf("Number of chars Printed: %.5u\nNumber of chars Printed by d in negative: %.10d\nTask 10 done!\n----------\n",numOfCharsPrinted,-numOfCharsPrinted);
+
     return 0;
 }
